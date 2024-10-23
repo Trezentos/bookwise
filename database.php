@@ -7,16 +7,7 @@ class DB
 
     public function __construct($config)
     {
-        $driver = $config['driver'];
-        unset($config['driver']);
-
-        $dsn = $driver.':'.http_build_query($config, '',';');
-
-        if($driver == 'sqlite'){
-            $dsn = $driver.':'.$config['database'];
-        }
-
-        $this->db = new PDO($dsn);
+        $this->db = new PDO($this->getDsn($config));
     }
 
 
@@ -33,11 +24,18 @@ class DB
         return $prepare;
     }
 
-    /**
-     * @return array<Livro>
-     *
-     *
-     */
+    private function getDsn($config){
+        $driver = $config['driver'];
+        unset($config['driver']);
+
+        $dsn = $driver.':'.http_build_query($config, '',';');
+
+        if($driver == 'sqlite'){
+            $dsn = $driver.':'.$config['database'];
+        }
+
+        return $dsn;
+    }
 }
 
 $DB = new DB($config['database']);
