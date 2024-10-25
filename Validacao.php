@@ -1,52 +1,4 @@
 <?php
-
-
-
-
-/**
- *
- * $validacao = Validacao::validar([
- * 'nome'=> 'required',
- * 'email'=> ['required', 'email', 'confirmed'],
- * 'senha' => ['required', 'min:8', 'max:30', 'strong'],
- * ], $_POST);
- *
- *
- *
- * $nome = $_POST['nome'];
- * $email = $_POST['email'];
- * $email_confirmacao = $_POST['email_confirmacao'];
- * $senha = $_POST['senha'];
- *
- * if (strlen($nome) == 0){
- * $validacoes[] = 'O nome é obrigatório.';
- * }
- *
- * if (strlen($email) == 0){
- * $validacoes[] = 'O email é obrigatório.';
- * }
- *
- * if (!filter_var($email, FILTER_VALIDATE_EMAIL)){
- * $validacoes[] = 'O email é inválido.';
- * }
- *
- * if ( $email != $email_confirmacao){
- * $validacoes[] = 'Os emails não batem';
- * }
- *
- * if (strlen($senha) == 0){
- * $validacoes[] = 'A senha é obrigatória';
- * }
- *
- * if (strlen($senha) < 7){
- * $validacoes[] = 'A senha deve ter no mínimo 8 caracteres';
- * }
- *
- * if(!str_contains($senha, '*')){
- * $validacoes[] = 'A senha deve ter um *';
- * }
- */
-
 class Validacao {
     public $validacoes;
     public static function validar($regras, $dados) {
@@ -61,7 +13,16 @@ class Validacao {
                 if($regra == 'confirmed'){
                     $validacao->$regra($campo, $valorDoCampo, $dados["{$campo}_confirmacao"]);
 
-                } else {
+                } else if (str_contains($regra, ':')) {
+                    $temp = explode(':', $regra);
+
+                    $regra = $temp[0];
+                    $regraAr = $temp[1];
+
+                    $validacao->$regra($regraAr, $campo, $valorDoCampo);
+                }
+
+                else {
                     $validacao->$regra($campo, $valorDoCampo);
                 }
 
@@ -92,25 +53,27 @@ class Validacao {
         }
     }
 
-    private function min8($campo){
-        if ($campo > 7){
-            $this->validacoes [] = "A senha deve ter no mínimo 8 caracteres";
+    private function min($min, $campo, $valor){
+        if (strlen($valor) < 7){
+            $this->validacoes [] = "A $campo deve ter no mínimo $min caracteres";
         }
     }
 
-    private function max30($campo){
-        if ($campo <= 30){
-            $this->validacoes [] = "A senha deve ter no máximo 30 caracteres";
+    private function max($max, $campo, $valor){
+        if (strlen($valor) >= 30){
+            $this->validacoes [] = "A $campo deve ter no máximo $max caracteres";
         }
     }
 
-    private function strong($campo){
-        if (!str_contains($campo, '*')){
-            $this->validacoes [] = "A senha deve ter no máximo 30 caracteres";
+    private function strong($campo, $valor){
+        if (!strpbrk($valor, '*-%^!@')){
+            $this->validacoes [] = "A $campo precisa ter um caracter especial";
         }
     }
 
     public function naoPassou(){
+        $_SESSION['validacoes'] = $this->validacoes;
+
         return sizeof($this->validacoes) > 0;
     }
 
