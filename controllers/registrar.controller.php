@@ -7,13 +7,13 @@ require 'Validacao.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    $validacao = Validacao::validar([
-        'nome'=> ['required'],
-        'email'=> ['required', 'email', 'confirmed'],
-        'senha' => ['required', 'min:8', 'max:30', 'strong'],
+    $validacao = Validation::validate([
+        "nome" => ['required'],
+        "email" => ['required', 'email', 'confirmed'],
+        "senha" => ['required', 'min:8', 'max:30', 'strong'],
     ], $_POST);
 
-    if ($validacao->naoPassou()){
+    if ($validacao->notPassed()){
         header('Location: /login');
         exit;
     }

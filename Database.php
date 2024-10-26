@@ -1,6 +1,8 @@
 <?php
 
 
+global $config;
+
 class DB
 {
     private $db;

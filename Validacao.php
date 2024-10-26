@@ -1,81 +1,83 @@
 <?php
-class Validacao {
-    public $validacoes;
-    public static function validar($regras, $dados) {
 
-        $validacao = new self;
+    class Validation {
+        public $validations = [];
+        public static function validate($rules, $data) {
+
+            $validation = new self;
+
+            foreach ($rules as $field => $ruleFromField) {
+                foreach ($ruleFromField as $rule) {
+                    $fieldValue = $data[$field];
+
+                    if($rule == 'confirmed'){
+                        $validation->$rule($field, $fieldValue, $data["{$field}_confirmacao"]);
+
+                    } else if (str_contains($rule, ':')) {
+                        $temp = explode(':', $rule);
+
+                        $rule = $temp[0];
+                        $regraAr = $temp[1];
+
+                        $validation->$rule($regraAr, $field, $fieldValue);
+                    }
+
+                    else {
+                        $validation->$rule($field, $fieldValue);
+                    }
 
 
-        foreach ($regras as $campo => $regrasDoCampo) {
-            foreach ($regrasDoCampo as $regra) {
-                $valorDoCampo = $dados[$campo];
-
-                if($regra == 'confirmed'){
-                    $validacao->$regra($campo, $valorDoCampo, $dados["{$campo}_confirmacao"]);
-
-                } else if (str_contains($regra, ':')) {
-                    $temp = explode(':', $regra);
-
-                    $regra = $temp[0];
-                    $regraAr = $temp[1];
-
-                    $validacao->$regra($regraAr, $campo, $valorDoCampo);
                 }
+            }
 
-                else {
-                    $validacao->$regra($campo, $valorDoCampo);
-                }
+            return $validation;
+        }
 
+        private function required($field, $data){
+
+            if (strlen($data) == 0){
+                $this->validations[] = "O $field é obrigatório.";
+            }
+        }
+
+        private function email($field, $data){
+            if (!filter_var($data, FILTER_VALIDATE_EMAIL)){
+                $this->validations [] = "O $field é inválido.";
 
             }
         }
 
-        return $validacao;
-    }
+        private function confirmed($field, $data, $dataDeConfirmacao){
 
-    private function required($campo, $valor){
-        if (strlen($valor) == 0){
-            $this->validacoes[] = "O $campo é obrigatório.";
+            if( $data != $dataDeConfirmacao ){
+                $this->validations [] = "O $field de confirmação está diferente.";
+            }
         }
-    }
 
-    private function email($campo, $valor){
-        if (!filter_var($valor, FILTER_VALIDATE_EMAIL)){
-            $this->validacoes [] = "O $campo é inválido.";
-
+        private function min($min, $field, $data){
+            if (strlen($data) < 7){
+                $this->validations [] = "A $field deve ter no mínimo $min caracteres";
+            }
         }
-    }
 
-    private function confirmed($campo, $valor, $valorDeConfirmacao){
-
-        if( $valor != $valorDeConfirmacao ){
-            $this->validacoes [] = "O $campo de confirmação está diferente.";
+        private function max($max, $field, $data){
+            if (strlen($data) >= 30){
+                $this->validations [] = "A $field deve ter no máximo $max caracteres";
+            }
         }
-    }
 
-    private function min($min, $campo, $valor){
-        if (strlen($valor) < 7){
-            $this->validacoes [] = "A $campo deve ter no mínimo $min caracteres";
+        private function strong($field, $data){
+            if (!strpbrk($data, '*-%^!@$')){
+                $this->validations [] = "A $field precisa ter um caracter especial";
+            }
         }
-    }
 
-    private function max($max, $campo, $valor){
-        if (strlen($valor) >= 30){
-            $this->validacoes [] = "A $campo deve ter no máximo $max caracteres";
+        public function notPassed(){
+            //$_SESSION['validacoes'] = $this->validations;
+
+            return sizeof($this->validations) > 0;
         }
+
+
     }
 
-    private function strong($campo, $valor){
-        if (!strpbrk($valor, '*-%^!@')){
-            $this->validacoes [] = "A $campo precisa ter um caracter especial";
-        }
-    }
-
-    public function naoPassou(){
-        $_SESSION['validacoes'] = $this->validacoes;
-
-        return sizeof($this->validacoes) > 0;
-    }
-
-
-}

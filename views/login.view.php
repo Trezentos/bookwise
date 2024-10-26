@@ -12,7 +12,7 @@
                     type="email"
                     name="email" required
                     class="border-stone-800 border-2 border rounded-md bg-stone-900 text-sm focus:outline-none px-2 py-1 "
-                    placeholder="Pesquisar"
+                    placeholder="Email"
                 >
             </div>
             <div class="flex flex-col">
@@ -25,9 +25,10 @@
                 >
             </div>
 
-            <button type="submit"
-                    class="border-stone-800 bg-stone-900 text-stone-400 px-4 py-1 rounded-md border-2 hover:bg-stone-800">
-
+            <button
+                type="submit"
+                class="border-stone-800 bg-stone-900 text-stone-400 px-4 py-1 rounded-md border-2 hover:bg-stone-800"
+            >
                 Logar
             </button>
 
