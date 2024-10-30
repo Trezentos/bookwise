@@ -1,15 +1,17 @@
 <?php
 require 'models/livro.php';
 require 'models/Usuario.php';
+require 'models/Avaliacao.php';
 
 session_start();
 
-require 'functions.php';
+require 'Flash.php';
 
-$config = require 'config.php';
+require 'functions.php';
 
 require 'Database.php';
 
+require 'Validation.php';
+
 require 'routes.php';
 
-?>

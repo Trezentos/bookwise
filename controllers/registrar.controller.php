@@ -1,7 +1,6 @@
 <?php
 
 global $DB;
-require 'Validacao.php';
 
 
 
@@ -9,11 +8,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $validacao = Validation::validate([
         "nome" => ['required'],
-        "email" => ['required', 'email', 'confirmed'],
+        "email" => ['required', 'email', 'confirmed', 'unique:usuarios'],
         "senha" => ['required', 'min:8', 'max:30', 'strong'],
     ], $_POST);
 
-    if ($validacao->notPassed()){
+    if ($validacao->notPassed('registrar')){
         header('Location: /login');
         exit;
     }
@@ -23,12 +22,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         params: [
             'nome' => $_POST['nome'],
             'email' => $_POST['email'],
-            'senha' => $_POST['senha']
+            'senha' => password_hash($_POST['senha'], PASSWORD_BCRYPT)
         ]
     );
 
-    header('location: /login?mensagem=Registrado com sucesso!');
+    flash()->push('mensagem', 'Registrado com sucesso!');
 
+    header('location: /login');
+
+    exit();
 }
 
-view('login');
+header('Location: /login');
+exit;
+

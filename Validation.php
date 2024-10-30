@@ -17,9 +17,9 @@
                         $temp = explode(':', $rule);
 
                         $rule = $temp[0];
-                        $regraAr = $temp[1];
+                        $ruleAr = $temp[1];
 
-                        $validation->$rule($regraAr, $field, $fieldValue);
+                        $validation->$rule($ruleAr, $field, $fieldValue);
                     }
 
                     else {
@@ -33,10 +33,26 @@
             return $validation;
         }
 
+        private function unique($table, $field, $data) {
+            if(strlen($data) == 0) {
+                return;
+            }
+
+            $db = new DB(config('database'));
+
+            $result = $db->query(
+                query: "select * from $table where $field = :valor",
+                params: ['valor' => $data],
+            )->fetch();
+
+            if ($result){
+                $this->validations [] = "O $field já está sendo usado.";
+            }
+        }
         private function required($field, $data){
 
             if (strlen($data) == 0){
-                $this->validations[] = "O $field é obrigatório.";
+                $this->validations[] = "O campo $field é obrigatório.";
             }
         }
 
@@ -72,11 +88,18 @@
             }
         }
 
-        public function notPassed(){
-            //$_SESSION['validacoes'] = $this->validations;
+        public function notPassed($customName = null){
 
+            $chave = 'validacoes';
+
+            if ($customName) {
+                $chave .= '_' . $customName;
+            }
+
+            flash()->push($chave, $this->validations);
             return sizeof($this->validations) > 0;
         }
+
 
 
     }

@@ -40,4 +40,4 @@ class DB
     }
 }
 
-$DB = new DB($config['database']);
+$DB = new DB(config('database'));
