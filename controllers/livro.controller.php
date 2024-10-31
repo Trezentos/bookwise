@@ -2,11 +2,8 @@
 
 
 
-$livro = $DB->query(
-    query: "SELECT * FROM livros WHERE id = :id",
-    class: Livro::class,
-    params:[":id" => $_REQUEST["id"]]
-)->fetch();
+$livro = Livro::get($_GET["id"]);
+
 
 $avaliacoes = $DB->query(
     "select * from avaliacoes WHERE livro_id = :id",

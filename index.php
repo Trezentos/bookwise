@@ -1,5 +1,5 @@
 <?php
-require 'models/livro.php';
+require 'models/Livro.php';
 require 'models/Usuario.php';
 require 'models/Avaliacao.php';
 
