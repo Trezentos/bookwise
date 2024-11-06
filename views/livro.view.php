@@ -45,9 +45,10 @@
                                 class="border-stone-800 border-2 border rounded-md bg-stone-900 text-sm focus:outline-none px-2 py-1 "
                                 placeholder="Comente o que você achou"
                         ></textarea>
-
-
                     </div>
+
+
+
                     <div class="flex flex-col">
                         <label for="" class="text-stone-500 mb-1">Nota</label>
                         <select

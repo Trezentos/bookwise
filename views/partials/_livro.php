@@ -1,7 +1,9 @@
+<?php //dd(__DIR__); ?>
+
 <div class="p-2 rounded border-stone-800 border-2 bg-stone-900">
 
     <div class=" flex ">
-        <div class="w-1/3">imagem</div>
+        <div class="w-1/3 w-40 mr-5 rounded is-hidden"><img src="<?=$livro->imagem ?>" alt=""></div>
         <div class="space-y-1">
             <a href="/livro?id=<?=$livro->id?>"  class="font-semibold hover:underline"><?=$livro->titulo?></a>
             <div class="text-xs italic">

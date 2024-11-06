@@ -19,7 +19,6 @@ $descricao = $_POST['descricao'];
 $ano_lancamento = $_POST['ano_lancamento'];
 
 
-
 $validacao = Validation::validate([
     "titulo" => ['required', 'min:3'],
     "autor" => ['required'],
@@ -32,13 +31,20 @@ if ($validacao->notPassed()){
     exit;
 }
 
-//dd($_POST);
+
+$newName = md5(rand());
+$extensao = pathinfo($_FILES['imagem']['name'], PATHINFO_EXTENSION);
+$imagem = 'images/'.$newName.".".$extensao;
+
+
+move_uploaded_file($_FILES['imagem']['tmp_name'], 'public/'.$imagem);
+
 
 $DB->query(
-    'insert into livros 
-    (titulo, autor, descricao, ano_lancamento, usuario_id)  values
-    (:titulo, :autor, :descricao, :ano_lancamento, :usuario_id)',
-    params: compact("titulo", "autor", "descricao", "ano_lancamento", "usuario_id")
+    'insert into livros
+    (titulo, autor, descricao, ano_lancamento, usuario_id, imagem)  values
+    (:titulo, :autor, :descricao, :ano_lancamento, :usuario_id, :imagem)',
+    params: compact("titulo", "autor", "descricao", "ano_lancamento", "usuario_id", 'imagem')
 );
 
 flash()->push('mensagem', 'Livro criado com sucesso!');
